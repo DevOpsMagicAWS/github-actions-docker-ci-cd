@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact - My Webpage</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        nav a { margin-right: 20px; text-decoration: none; }
+        form { max-width: 400px; }
+        input, textarea { width: 100%; margin: 10px 0; padding: 8px; }
+        button { padding: 10px 20px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+    </nav>
+    
+    <h1>Contact Us</h1>
+    <form onsubmit="submitForm(event)">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="message" placeholder="Your Message" rows="4"></textarea>
+        <button type="submit">Send Message</button>
+    </form>
+    
+    <div id="response"></div>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            fetch('/contact', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerHTML = 
+                    '<p style="color: green;">' + data.message + '</p>';
+                event.target.reset();
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+name: CI/CD Pipeline 
+
+env:
+  PYTHON_VERSION: '3.10'
+  IMAGE_NAME: github-actions-demo
+  PORT: 8080
+
+on:
+    push:
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+
+jobs:
+    build-test:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+
+          - name: Set up Python
+            uses: actions/setup-python@v5
+            with:
+              python-version: ${{ env.PYTHON_VERSION }}
+
+          - name: Cache pip dependencies
+            uses: actions/cache@v3
+            with:
+              path: ~/.cache/pip
+              key: ${{ runner.os }}-pip-${{ hashFiles('app/requirements.txt') }}
+              restore-keys: |
+                ${{ runner.os }}-pip-
+
+          - name: Install dependencies
+            run: |
+              pip install -r app/requirements.txt
+              pip install pytest
+
+          - name: Run tests
+            run: pytest tests/
+
+    docker-build:
+      runs-on: ubuntu-latest
+      needs: build-test
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Build Docker image
+          run: docker build -t ${{ env.IMAGE_NAME }} ./app
+
+        - name: Run container (test)
+          run: |
+            docker run --rm -d -p ${{ env.PORT }}:${{ env.PORT }} --name test-container ${{ env.IMAGE_NAME }}
+            sleep 5
+            if ! curl -f http://localhost:${{ env.PORT }}; then
+              docker stop test-container || true
+              exit 1
+            fi
+            docker stop test-container
+
