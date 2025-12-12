@@ -44,9 +44,18 @@ Visit http://localhost:8080
 
 Automatically runs on push/PR to main:
 1. **Test** - Runs pytest with dependency caching
-2. **Build** - Creates Docker image
-3. **Deploy Test** - Validates container functionality
-4. **Notify** - Sends Discord/Slack notifications (optional)
+2. **Security Scan** - Dependency and code security analysis
+3. **Build** - Creates Docker image
+4. **Docker Security Scan** - Container vulnerability scanning
+5. **Deploy Test** - Validates container functionality
+6. **Notify** - Sends Discord/Slack notifications (optional)
+
+## Security Features
+
+- **Dependency Scanning** - Safety checks for vulnerable Python packages
+- **Code Analysis** - Bandit scans for security issues in code
+- **Container Scanning** - Trivy scans Docker images for vulnerabilities
+- **Security Reports** - Downloadable artifacts from GitHub Actions
 
 ## Environment Variables
 
