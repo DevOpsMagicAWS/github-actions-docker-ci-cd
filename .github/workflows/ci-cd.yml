@@ -51,7 +51,7 @@ jobs:
               bandit -r app/ -f json -o bandit-report.json || true
 
           - name: Upload security reports
-            uses: actions/upload-artifact@v3
+            uses: actions/upload-artifact@v4
             if: always()
             with:
               name: security-reports
@@ -75,7 +75,7 @@ jobs:
               --format json --output trivy-report.json ${{ env.IMAGE_NAME }} || true
 
         - name: Upload Docker security report
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           if: always()
           with:
             name: docker-security-report
