@@ -61,3 +61,28 @@ jobs:
             fi
             docker stop test-container
 
+    notify:
+      runs-on: ubuntu-latest
+      needs: [build-test, docker-build]
+      if: always()
+      steps:
+        - name: Send Slack/Discord Notification
+          env: 
+            WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+            STATUS: ${{ needs.docker-build.result }}
+          run: | 
+            if [ -z "$WEBHOOK_URL" ]; then
+              echo "WEBHOOK_URL not set, skipping notification"
+              exit 0
+            fi
+            
+            if [ "$STATUS" == "success" ]; then
+              MESSAGE="✅ Pipeline succeeded on branch: ${{ github.ref_name }} - Commit: ${{ github.sha }}"
+            else
+              MESSAGE="❌ Pipeline failed on branch: ${{ github.ref_name }} - Commit: ${{ github.sha }}"
+            fi
+
+            curl -H "Content-Type: application/json" \
+                 -X POST \
+                 -d "{\"content\": \"${MESSAGE}\", \"username\": \"Github Actions Bot\"}" \
+                 $WEBHOOK_URL

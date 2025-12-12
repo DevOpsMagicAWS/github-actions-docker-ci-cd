@@ -46,7 +46,19 @@ Automatically runs on push/PR to main:
 1. **Test** - Runs pytest with dependency caching
 2. **Build** - Creates Docker image
 3. **Deploy Test** - Validates container functionality
+4. **Notify** - Sends Discord/Slack notifications (optional)
 
 ## Environment Variables
 
 - `FLASK_DEBUG` - Enable debug mode (true/false)
+
+## Notifications (Optional)
+
+The pipeline can send Discord/Slack notifications on build success/failure.
+
+**Setup:**
+1. Go to Repository Settings → Secrets and variables → Actions
+2. Add secret: `WEBHOOK_URL` with your Discord/Slack webhook URL
+3. Pipeline will automatically send notifications
+
+**Without webhook:** Pipeline runs normally, notifications are skipped.
